@@ -193,3 +193,112 @@ maxSubarraySum([2,6,9,2,1,8,5,6,3], 3)
 ## Divide and Conquer
 
 Rozdzielanie danych na mniejsze kawałki i powtarzanie procesu z podzbiorem, subsetem tych danych
+
+# Recursion
+
+- A process that calls itself.
+
+Recursive funkcje dodają ciągle nowe funkcje do call stack
+
+**Base Case** - moment w którym recursive funkcja kończy się
+
+**Różny input** - za każdym razem kiedy wywołujemy funkcje chcemy zeby miala inny input niz wczesniej 
+
+```jsx
+function sumRange(num){
+  if(num === 1) return 1;
+  return num + sumRange(num-1)
+}
+
+sumRange(3) // => 6
+```
+
+```jsx
+=> sumRange(3)
+		return 3 + sumRange(2)
+								return 2 + sumRange(1)
+														return 1
+```
+
+dla `num = 3` funkcja zwraca `3 + sumRange(2)`
+funkcja jest powtarzana az do spotkania z Base Case
+`3 + sumRange(2)` czeka na `sumRange(2)`, ktore czeka na `2 + sumRange(1)`
+
+```jsx
+function silnia(num){
+  if(num === 1) return 1
+  return num * silnia(num-1)
+}
+
+silnia(5) // => 120
+```
+
+## Helper Method Recursion
+
+```jsx
+function outer(input){
+  let outerScopedVariable = []
+  
+  function helper(helperInput){
+    // modify the outerScopeVariable
+    helper(helperInput--)
+  }
+  
+  helper(input)
+  
+  return outerScoperVariable
+}
+```
+
+```jsx
+function collectOddValues(arr){
+  
+  let result = []
+  
+  function helper(helperInput){
+    if(helperInput.length === 0){
+      return
+    }
+    if(helperInput[0] % 2 !== 0){
+      result.push(helperInput[0])
+    }
+    helper(helperInput.slice(1))
+  }
+  
+  helper(arr)
+  return result
+  
+}
+```
+
+## Pure Recursion
+
+```jsx
+function collectOddValues(arr){
+  let newArr = [];
+  
+  if(arr.length == 0){
+    return newArr
+  }
+  
+  if(arr[0] % 2 !== 0){
+    newArr.push(arr[0])
+  }
+  
+  newArr = newArr.concat(collectOddValues(arr.slice(1)))
+  return newArr
+  
+}
+
+collectOddValues([1,2,3,4,5]) // => [1,3,5]
+```
+
+```jsx
+collectOddValues([1,2,3,4,5]) //  => [1,3,5]
+[1].concat(collectOddValues([2,3,4,5]))
+					[].concat(collectOddValues[3,4,5])
+										[3].concat(collectOddValues[4,5])
+																[].concat(collectOddValues[5])
+																					[5].concat(collectOddValues[])
+																										 []
+```
