@@ -94,20 +94,138 @@ The function must accept a non-negative integer. If it is zero, it just returns�
     
     ```jsx
     function formatDuration (seconds) {
-  var time = { year: 31536000, day: 86400, hour: 3600, minute: 60, second: 1 },
-      res = [];
-
-  if (seconds === 0) return 'now';
-  
-  for (var key in time) {
-    if (seconds >= time[key]) {
-      var val = Math.floor(seconds/time[key]);
-      res.push(val += val > 1 ? ' ' + key + 's' : ' ' + key);
-      seconds = seconds % time[key];
+      var time = { year: 31536000, day: 86400, hour: 3600, minute: 60, second: 1 },
+          res = [];
+    
+      if (seconds === 0) return 'now';
+      
+      for (var key in time) {
+        if (seconds >= time[key]) {
+          var val = Math.floor(seconds/time[key]);
+          res.push(val += val > 1 ? ' ' + key + 's' : ' ' + key);
+          seconds = seconds % time[key];
+        }
+      }
+     
+      return res.length > 1 ? res.join(', ').replace(/,([^,]*)$/,' and'+'$1') : res[0]
     }
-  }
- 
-  return res.length > 1 ? res.join(', ').replace(/,([^,]*)$/,' and'+'$1') : res[0]
     ```
     
- 
+
+---
+
+Write a function called `reverseString` that takes in a string and returns the reversed version of the string. Be sure to use recursion in your solution.
+
+```jsx
+reverseString('hello'); // should return 'olleh'
+reverseString('world'); // should return 'dlrow'
+reverseString(''); // should return ''
+reverseString('a'); // should return 'a'
+reverseString('racecar'); // should return 'racecar'
+```
+
+- Solution
+    
+    ```jsx
+    function reverseString(str) {
+      if (str === "") {
+        return "";
+      }
+      const lastLetter = str.slice(-1);
+      const rest = str.slice(0, -1);
+      return lastLetter + reverseString(rest);
+    }
+    ```
+    
+
+---
+
+Write a function called `fibonacci` that takes in a number and returns the number at that index of the Fibonacci sequence.
+
+```jsx
+fibonacci(4); // 3
+fibonacci(6); // 8
+fibonacci(10); // 55
+```
+
+- Solution
+    
+    ```jsx
+    function fibonacci(num) {
+      // Base case
+      if (num < 2) return num;
+    
+      // Recursive case
+      return fibonacci(num - 1) + fibonacci(num - 2);
+    }
+    ```
+    
+
+---
+
+Write a function called `flattenArray` that takes in an array containing nested arrays of integers and returns a new array with all the integers from the nested arrays flattened into a single level.
+
+```jsx
+flattenArray([1, [2, 3], [4, 5, [6]]]); // should return [1, 2, 3, 4, 5, 6]
+flattenArray([
+  [1, 2],
+  [3, [4, 5]],
+  [6, [7]],
+]); // should return [1, 2, 3, 4, 5, 6, 7]
+flattenArray([1, [2, [3, [4, [5]]]]]); // should return [1, 2, 3, 4, 5]
+```
+
+- Solution
+    
+    ```jsx
+    function flattenArray(arr) {
+      let result = [];
+    
+      for (const item of arr) {
+        if (Array.isArray(item)) {
+          result = result.concat(flattenArray(item));
+        } else {
+          result.push(item);
+        }
+      }
+    
+      return result;
+    }
+    ```
+    
+
+---
+
+Write a function called permutations that takes in a string as a parameter and returns an array of all possible permutations of the characters in the string.
+
+```jsx
+permutations('abc'); // ['abc', 'acb', 'bac', 'bca', 'cab', 'cba']
+permutations('dog'); // ['dog', 'dgo', 'odg', 'ogd', 'gdo', 'god']
+```
+
+- Solution
+    
+    ```jsx
+    function permutations(str) {
+      const result = [];
+    
+      if (str.length === 0) {
+        result.push("");
+        return result;
+      }
+    
+      for (let i = 0; i < str.length; i++) {
+        const firstChar = str[i];
+        const restOfString = str.slice(0, i) + str.slice(i + 1);
+        const subPermutations = permutations(restOfString);
+    
+        for (let j = 0; j < subPermutations.length; j++) {
+          result.push(firstChar + subPermutations[j]);
+        }
+      }
+    
+      return result;
+    }
+    ```
+    
+
