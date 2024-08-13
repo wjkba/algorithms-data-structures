@@ -302,3 +302,92 @@ collectOddValues([1,2,3,4,5]) //  => [1,3,5]
 																					[5].concat(collectOddValues[])
 																										 []
 ```
+
+# Searching algorithms
+
+## Linear search
+
+`indexOf` , `includes` , `find`  i `findIndex`  - wszystkie te metody to linear search. 
+Po kolei sprawdzają każdy item dopóki nie znajdą pasującego elementu. Linear search jest O(n) chyba, ze element jest na poczatku arraya wtedy znajdujemy szybko. Im dluzszy array tym dluzszy średni czas szukania elementu.
+
+## Binary search
+
+![binary.png](images/binary.png)
+
+Binary search jest duzo szybszy, zamiast eliminowania jednego elementu na raz (linear search sprawdza jeden, eliminuje i idzie do nastepnego) mozna wyeliminowac polowe elementow na raz. Binary search dziala tylko na posortowanych arrayach! Sredni czas to O(logn)
+
+Szukamy połowe posortowanego arraya i sprawdzamy czy wybrany środek jest przed czy po elemencie, którego szukamy. Z połowy wybieramy następną połowe itd.
+
+```jsx
+const sortedNumbers = [2, 5, 8, 11, 15, 23, 37, 42, 56, 68];
+
+function binarySearch(array, value){
+	// tworzymy trzy wskazniki
+  let left = 0
+  let right = array.length-1
+  let middle = Math.round((left+right)/2)
+
+  while(array[middle] !== value && left <= right){
+	  // left musi byc mniejszy/rowny right bo inaczej funkcja bedzie trwala w nieskonczonosc
+    // przesuwamy wskazniki w zaleznosci od tego czy middle jest mniejszy czy wiekszy
+    if(array[middle] > value) right = middle-1
+    else left = middle+1
+    middle = Math.round((left+right)/2)
+  }
+  
+  if(array[middle] === value) return middle
+  else return -1
+}
+
+console.log(binarySearch(sortedNumbers,37))
+```
+
+# Sorting algorithms
+
+Sortowanie jest bardzo często używane w programowaniu, dobrze jest zrozumieć jak działa algorytm sortowania a każdy algorytm ma swoje wady i zalety
+
+Javascript ma metodę `array.sort()` , domyślna kolejność sortowania wg. unicode. Przy domyślnych ustawieniach metoda jest przydatna tylko przy stringach, na numerach nie dziala. Można stworzyć funkcje porównującą, która bierze dwie wartości `a` i `b` , jeśli funkcja zwraca wynik ujemny to a jest przed b, dla wyniku dodatniego b jest przed a, dla zera są w tym samym miejscu
+
+## Bubble sort
+
+![Bubble-sort-example-300px-ezgif.com-speed.gif](images/Bubble-sort-example-300px-ezgif.com-speed.gif)
+
+Bubble sort porównuje dwie wartości, jeśli jedna jest większa od drugiej to swapujemy, zamieniamy je miejscami. Funkcja kilka razy będzie przemielała funkcję w taki sposób, że największe wartości bąbelkują na górę (na koniec).
+
+Ten algorytm nie jest często używany, ale jest dobrym problemem.
+
+```jsx
+function bubbleSort(array){
+  let noSwaps // ta zmienna bedzie sprawdzac czy podczas loopa zrobilismy swapa
+  for(let i = array.length; i > 0; i--){
+    console.log(array)
+    let noSwaps = true // domyslnie jest true, jesli zrobimy swapa bedzie false
+    // idziemy od tylu zeby zmniejszac liczbe odpalania sie petli za 
+    // kazdym razem kiedy znaleziona liczba wybąbelkuje na góre.
+    // Dlatego j < i-1
+    for(let j = 0; j<i-1; j++){
+      if(array[j] > array[j+1]){
+        swap(array, j,j+1)
+        noSwaps = false
+      }
+    }
+    // jesli nie zrobilismy swapa to znaczy, ze array jest juz posortowany
+    // nie ma sensu ciągle go mielić aż do końca pętli bo nie wprowadzamy
+    // już żadnych zmian, dlatego przerywamy pętle i zwracamy wynik
+    if(noSwaps)break 
+  }
+  return array
+}
+```
+
+Funkcja swap
+
+```jsx
+function swap(array, index1, index2){
+  let temp = array[index1]
+  array[index1] = array[index2]
+  array[index2] = temp
+  // es2015
+  // [array[index1], array[index2]] = [array[index2], array[index1]]
+}
+```
