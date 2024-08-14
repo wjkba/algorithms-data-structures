@@ -350,7 +350,7 @@ Javascript ma metodę `array.sort()` , domyślna kolejność sortowania wg. unic
 
 ## Bubble sort
 
-![Bubble-sort-example-300px-ezgif.com-speed.gif](images/Bubble-sort-example-300px-ezgif.com-speed.gif)
+![bubble-sort.gif](images/bubble-sort.gif)
 
 Bubble sort porównuje dwie wartości, jeśli jedna jest większa od drugiej to swapujemy, zamieniamy je miejscami. Funkcja kilka razy będzie przemielała funkcję w taki sposób, że największe wartości bąbelkują na górę (na koniec).
 
@@ -390,4 +390,132 @@ function swap(array, index1, index2){
   // es2015
   // [array[index1], array[index2]] = [array[index2], array[index1]]
 }
+```
+
+## Selection sort
+
+![selection-sort](images/selection-sort.gif)
+
+Podobny do bubble sort tylko zamiast ukladac najpierw najwyższe wartości to wstawia najmniejsze na początek. 
+
+Selection sort jest `O(n^2)`
+
+```jsx
+function selectionSort(array){
+  for(let i = 0; i < array.length; i++){
+
+    let minIndex = i
+    for(let j = i+1; j < array.length; j++){
+      if(array[j] < array[minIndex]) minIndex = j
+    }
+
+    if(i !== minIndex) swap(array, i, minIndex)
+  }
+  return array
+}
+```
+
+## Insertion sort
+
+![insertion-sort.gif](images/insertion-sort.gif)
+
+Insertion sort stopniowo tworzy większą lewą porcję array, która jest zawsze posortowana. Algorytm zapamiętuję sub array i wstawia następne wartości między te już posortowane. Insertion sort jest przydatny kiedy mamy do czynienia z wpływającymi danymi i od razu chcemy je sortować.
+
+Insertion sort jest `O(n^2)`
+
+```jsx
+function insertionSort(array){
+  for(let i = 1; i < array.length; i++){
+    let currentValue = array[i]
+    let j
+    
+    // inner loop zaczyna sie na indeksie o 1 mniejszym od i 
+    // leci w dół porównując wartości   
+    // && array[h] > currentValue zapobiega tutaj niepotrzebnemu loopowaniu
+    // i porównywaniu wartości, które i tak są mniejsze po co więc je porównywać
+    // ten conditional jest tez bramką bo zawsze sprawdza czy wartośc jest większa od currentValue
+    for(j = i-1; j >= 0 && array[j] > currentValue; j--){
+      array[j+1] = array[j] // jesli array[j] jest wieksze od array[j+1] to zmieniamy 
+    }
+    array[j+1] = currentValue // tutaj podmieniamy
+
+  }
+
+  return array
+}
+```
+
+## Merge sort
+
+Merge sort i następne algorytmy są lepsze od poprzednich.
+
+![merge-sort.gif](images/merge-sort.gif)
+
+Merge sort rozdziela array na mniejsze arraye z pojedynczymi elementami. Algorytm porównuje pojedyncze elementy i sprawdza, który jest większy i tworzy arraye z dwoma elementami, następnie porównuje posortowane już arraye i tworzy następne itd. Wynikiem jest nowy posortowany array
+
+Merge sort jest `O(nlogn)`
+
+funkcja merge:
+
+```jsx
+function merge(arr1, arr2) {
+  let result = [];
+  let i = 0;
+  let j = 0;
+  while (i < arr1.length && j < arr2.length) {
+    if (arr1[i] < arr2[j]) {
+      result.push(arr1[i]);
+      i++;
+    } else {
+      result.push(arr2[j]);
+      j++;
+    }
+  }
+
+  // jeżeli arr1 i arr2 nie mają takiej samej liczby elementów to po
+  // zakończeniu porównywania trzeba te elementy dodać do wyniku
+  // dwa while loopy poniżej dbają o to żeby pozostale
+  // wartości w arrayach zostały dodane do wyniku
+  while (i < arr1.length) {
+    result.push(arr1[i]);
+    i++;
+  }
+
+  while (j < arr2.length) {
+    result.push(arr2[j]);
+    j++;
+  }
+
+  return result;
+}
+
+console.log(merge([1, 10, 50], [2, 14, 99, 100]));
+```
+
+mergeSort:
+
+```jsx
+function mergeSort(arr) {
+  if (arr.length <= 1) return arr; // base case
+  let middle = Math.floor(arr.length / 2);
+  // niech mergeSort([61,30,21,14])
+  // 1. array przechodzi checka i idzie dalej
+  // 2. array jest podzielony na [61,30] i [21,14]
+  // 3. [61,30] wchodzi do recursive funkcji i jest rozdzielany na [61] i [30]
+  // w zależności od wielkości array callstack będzie się powiększać i 
+  // poprzednia wartość będzie czekała na następną
+  // [61] wchodzi do recursive funkcji i zwraca [61]
+  // [30] wchodzi do recursive funkcji i zwraca [30]
+  // uruchamiamy merge i dostajemy [30, 61] - to jest wartość leftHalf
+  // 4. [21,14] wchodzi do recursive funkcji i jest rozdzielany tak jak wyżej
+  // (...)
+  // wartość rightHalf to [14,21]
+  // 5. odpalamy merge i dostajemy wynik [14,21,30,61]
+  let leftHalf = mergeSort(arr.slice(0, middle)); // recursive case
+  let rightHalf = mergeSort(arr.slice(middle)); // recursive case
+  return merge(leftHalf, rightHalf)
+
+}
+
+console.log(mergeSort([61, 30, 21, 14,]));
 ```
