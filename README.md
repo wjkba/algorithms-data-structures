@@ -519,3 +519,101 @@ function mergeSort(arr) {
 
 console.log(mergeSort([61, 30, 21, 14,]));
 ```
+
+## Quick sort
+
+![quick-sort.gif](images/quick-sort.gif)
+
+obieramy jakiś pivot point, sprawdzamy ile jest mniejszych wartości od pivot wartości w array i wstawiamy je przed ten pivot point (nie muszą być w tym momencie posortowane), szukając tych wartości zapisujemy ile ich znaleziono, pivot point przeskakuje do przodu o tą wartość. Operujemy ciągle na jednym arrayu i czynności te są powtarzane rekursywnie.
+
+Time complexity to `O(nlogn)`
+
+pivot funkcja
+
+```jsx
+function pivot(array, startIndex = 0, endIndex = array.length - 1) {
+  let pivot = array[startIndex];
+  let currentPivotIndex = startIndex;
+  for (let i = startIndex + 1; i <= endIndex; i++) {
+    if (array[i] < pivot) {
+      currentPivotIndex++;
+      swap(array, currentPivotIndex, i)
+    }
+  }
+  swap(array, startIndex, currentPivotIndex)
+  console.log(array);
+  return currentPivotIndex;
+}
+
+const unsortedNumbers = [4, 8, 2, 1, 5, 7, 6, 3];
+console.log(pivot(unsortedNumbers));
+
+```
+
+quick sort
+
+```jsx
+function quickSort(arr, left = 0, right = arr.length - 1) {
+  // kiedy left i right są takie same oznacza to, że po
+  // rekursywnym odpalaniu funkcji quicksort doszliśmy do momentu
+  // w którym subarray ma jeden element
+  if (left < right) {
+    let pivotIndex = pivot(arr, left, right);
+
+    //left
+    quickSort(arr, left, pivotIndex - 1);
+    //right
+    quickSort(arr, pivotIndex + 1);
+  }
+  return arr;
+}
+```
+
+## Radix sort
+
+Wszystkie poprzednie sorty należą do algorytmów sortujących porównujących, najlepsze time complexity możliwe przy tych algorytmach to `O(nlogn)`. Radix sort niczego nie porównuje, jest specjalny i działa na liczbach. Wykorzystuje informacje o wielkości cyfr - więcej cyfr to większa liczba.
+
+![radix-sort.gif](https://miro.medium.com/v2/resize:fit:1400/1*EwTFPdvMoGtCrwKwWMqvJg.gif)
+
+Radix tworzy 9 bucketów i sprawdza pierwszą cyfre od prawej strony każdego elementu array i grupuje liczby według tej cyfry, tworzy to ten sam array ale inaczej uporządkowany. Potem powtarzamy operacje na nowym arrayu dla następnej cyfry.
+
+Radix sort jest `O(nk)`, gdzie n - długość array, k - średnia liczba cyfr
+
+helper funkcje do radix sort
+
+```jsx
+function getDigit(num,place){
+  return Math.floor(Math.abs(num)/Math.pow(10,place) % 10)
+}
+
+function digitCount(num){
+  if(num === 0) return 1
+  return Math.floor(Math.log10(Math.abs(num))) + 1
+}
+
+function mostDigits(arr){
+  let max = arr[0]
+  for(number of arr){
+    if(number > max) max = number
+  }
+  return digitCount(max)
+}
+
+```
+
+radixSort
+
+```jsx
+function radixSort(arr){
+ const largestNumberOfDigits = mostDigits(arr)
+ for(let k = 0; k <= largestNumberOfDigits; k++){
+  let buckets = {0: [], 1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[], 8:[], 9:[]}
+  for(number of arr){
+    const digit = getDigit(number, k)
+    buckets[digit].push(number)
+  }
+  arr = [].concat(...Object.values(buckets));
+ }
+ return arr
+}
+```
