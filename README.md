@@ -617,3 +617,230 @@ function radixSort(arr){
  return arr
 }
 ```
+
+# Data structures
+
+Data structures to kolekcje wartości, relacji między nimi i funkcje albo operacje, które mogą być zastosowane do danych. Tworzymy klasy i dodajemy do nich funkcjonalność
+
+## Klasy powtórka
+
+Klasa to blueprint do tworzenia obiektów z predefiniowanymi właściwościami i metodami
+
+Klasa powinna zaczynać się od wielkiej litery
+
+`this`  odnosi się do instancji klasy, czyli nowego obiektu stworzonego przez tą klasę
+
+```jsx
+class Student {
+  constructor(firstName, lastName) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+  }
+}
+
+let firstStudent = new Student("John", "Doe")
+let secondStudent = new Student("Jan", "Kowalski")
+```
+
+### Instance Methods
+
+```jsx
+class Student {
+  constructor(firstName, lastName) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.scores = []
+  }
+  fullName() {
+    console.log(`Your full name is ${this.firstName} ${this.lastName}`);
+  }
+  addScore(score){
+    this.scores.push(score)
+    console.log(this.scores)
+  }
+  calculateAverage(){
+    const average =  this.scores.reduce((a,b)=>a+b)/this.scores.length
+    console.log(average)
+  }
+}
+
+let firstStudent = new Student("John", "Doe");
+firstStudent.fullName();
+firstStudent.addScore(5)
+firstStudent.addScore(2)
+firstStudent.calculateAverage()
+```
+
+### Class Methods
+
+static methody są uruchamiane bez tworzenia instancji ich klasy i nie mogą być uruchamiane przez instancje klasy. Są to utility functions
+
+```jsx
+class Circle {
+  constructor(radius) {
+    this.radius = radius;
+  }
+
+  getArea() {
+    return Math.PI * this.radius * this.radius;
+  }
+
+  static compareCircles(circle1, circle2) {
+    console.log(circle1.getArea() > circle2.getArea() ? circle1 : circle2
+  }
+}
+
+const circle1 = new Circle(3);
+const circle2 = new Circle(4);
+
+Circle.compareCircles(circle1, circle2);
+```
+
+## Singly Linked Lists
+
+Linked list zawiera elementy **bez indeksów,** które wskazują na następny element. 
+Linked lista złożona jest z **node**’ów, każdy node ma wartość i **next** **pointer**, który wskazuje na następny node albo null. Random access nie istnieje, trzeba przejśc przez każdy element.
+Skoro nie ma indeksów to nie ma problemu z dodawaniem wartości na początku, dodajemy po prostu nowy head, który wskazuje na stary head. W arrayach dodawanie elementu na początek sprawia, że trzeba przesuwać wszystkie indeksy.
+Singly linked lista to lista w której każdy node jest połączony tylko z jednym node’m, jednokierunkowo
+
+![image.png](https://static.wikia.nocookie.net/leetcode/images/9/96/Linked_list.png/revision/latest?cb=20210107211753)
+
+```jsx
+// node zawiera val i next
+// piece of data - val
+// reference to the next node - next 
+
+class Node{
+  constructor(val){
+    this.val = val
+    this.next = null
+  }
+}
+
+let first = new Node(1)
+first.next = new Node(2)
+first.next.next = new Node(3)
+// first => { val: 1, next: Node { val: 2, next: Node { val: 3, next: null } } }
+```
+
+push
+
+```jsx
+class SinglyLinkedList {
+  constructor() {
+    this.length = 0;
+    this.head = null;
+    this.tail = null;
+  }
+  push(val) {
+    const newNode = new Node(val);
+    if (!this.head) {
+      this.head = newNode;
+      this.tail = newNode;
+    } else {
+      this.tail.next = newNode;
+      this.tail = newNode;
+    }
+    this.length++;
+    return this;
+  }
+}
+
+```
+
+pop
+
+```jsx
+
+  pop() {
+    if (!this.head) return undefined;
+    if (this.length === 1) {
+      const poppedNode = this.head;
+      this.head = null;
+      this.tail = null;
+      return poppedNode.val;
+    }
+    //
+    let currentNode = this.head;
+    let previousNode = null;
+    while (currentNode.next) {
+      previousNode = currentNode;
+      currentNode = currentNode.next;
+    }
+    this.tail = previousNode;
+    this.tail.next = null;
+    this.length--;
+    if(this.length === 0)this.tail = null
+    return currentNode.val;
+  }
+
+```
+
+shift
+
+```jsx
+  shift(){
+    const currentHeadNode = this.head
+    if(!(currentHeadNode)) return undefined
+    this.head = currentHeadNode.next
+    this.length--
+    return currentHeadNode.val
+  }
+```
+
+unshift
+
+```jsx
+ unshift(val){
+    const currentHeadNode = this.head
+    const newHeadNode = new Node(val)
+    newHeadNode.next = currentHeadNode
+    this.head = newHeadNode
+    if(!currentHeadNode) this.tail = newHeadNode
+    this.length++
+    return this
+  }
+```
+
+set
+
+```jsx
+  set(index, value){
+    const foundNode = this.get(index)
+    if(!foundNode) return false
+    foundNode.val = value
+    return true
+  }
+```
+
+insert wykorzystuje poprzednie metody
+
+```jsx
+insert(index, value) {
+  if (index > this.length || index < 0) return false;
+  if (index === this.length) return !!this.push(value);
+  if (index === 0) return !!this.unshift(value);
+  let targetNode = this.get(index);
+  let previousNode = this.get(index - 1);
+  let newNode = new Node(value);
+  newNode.next = targetNode;
+  previousNode.next = newNode;
+  this.length++;
+  return true;
+}
+```
+
+remove
+
+```jsx
+  remove(index){
+    if(index < 0 || index > this.length-1) return undefined
+    if(index === this.length-1) return !!this.pop()
+    if(index === 0 ) return !!list.shift()
+    let targetNode = this.get(index)
+    let previousNode = this.get(index-1)
+    previousNode.next = targetNode.next
+    this.length--
+    return previousNode
+  }
+```
