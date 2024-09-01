@@ -844,3 +844,198 @@ remove
     return previousNode
   }
 ```
+reverse
+
+```jsx
+  reverse() {
+    let initialHead = this.head;
+    let initialTail = this.tail;
+    this.head = initialTail;
+    this.tail = initialHead;
+    let nextNode;
+    let currentNode = initialHead;
+    let prevNode = null;
+
+    for (let i = 0; i < this.length; i++) {
+      nextNode = currentNode.next;
+      currentNode.next = prevNode;
+      prevNode = currentNode;
+      currentNode = nextNode;
+    }
+    
+    return this
+  }
+
+```
+
+### Singly linked list Big O
+
+insertion - `O(1)` 
+
+removal - `O(1)` albo `O(n)` , zalezy skąd usuwamy
+
+searching - `O(n)` 
+
+access - `O(n)`
+
+Singly linked listy są dobrą alternatywą dla arrayów, kiedy wstawianie i usuwanie na początku są często używane
+
+## Doubly linked lists
+
+Prawie to samo co singly linked lists, różnica jest taka, że każdy node ma pointer wskazujący na poprzedniego node’a. Każdy node wskazuje na następny i poprzedni node.
+
+![doubly-linked-lists.png](images/doubly-linked-lists.png)
+
+```jsx
+class Node{
+  constructor(val, next, prev){
+    this.val = val
+    this.next = null
+    this.prev = null
+  }
+}
+
+class DoublyLinkedList{
+  constructor(head,tail,length){
+    this.head = null
+    this.tail = null
+    this.length = 0
+  }
+}
+```
+
+```jsx
+  push(val) {
+    const newNode = new Node(val);
+    if (this.length === 0) {
+      this.head = newNode;
+      this.tail = newNode;
+    } else {
+      this.tail.next =  newNode
+      newNode.prev = this.tail
+      this.tail = newNode;
+    }
+    this.length++;
+    return this;
+  }
+```
+
+```jsx
+pop() {
+    const currentTail = this.tail;
+    if (!this.head) return undefined;
+    if (this.length === 1) {
+      this.head = null;
+      this.tail = null;
+    } else {
+      this.tail = currentTail.prev;
+      this.tail.next = null;
+    }
+    this.length--;
+    return currentTail;
+  }
+```
+
+```jsx
+shift() {
+    const oldHead = this.head;
+    if(this.length === 0) return undefined
+    if (this.length === 1) {
+      this.head = null;
+      this.tail = null;
+    } else {
+      this.head = oldHead.next;
+      this.head.prev = null;
+      oldHead.next = null
+    }
+    this.length--;
+    return oldHead;
+  }
+```
+
+```jsx
+ unshift(value) {
+    const newNode = new Node(value);
+    if (this.length === 0) {
+      this.head = newNode
+      this.tail = newNode
+    } else {
+      const oldHead = this.head;
+      oldHead.prev = newNode;
+      newNode.next = oldHead;
+      this.head = newNode;
+    }
+    this.length++;
+    return this
+  }
+```
+
+```jsx
+  get(index) {
+    if (index < 0 || index >= this.length) return null;
+    let count, current;
+    if (index <= this.length / 2) {
+      count = 0;
+      current = this.head;
+      while (count !== index) {
+        current = current.next;
+        count++;
+      }
+      return current;
+    } else {
+      count = this.length - 1;
+      current = this.tail;
+      while (count !== index) {
+        current = current.prev;
+        count--;
+      }
+      return current;
+    }
+  }
+```
+
+```jsx
+insert(index, value){
+    if(index < 0 || index > this.length) return false
+    if(index === 0) return this.unshift(value)
+    if(index === this.length) return this.push(value)
+    const newNode = new Node(value)
+    const beforeNode = this.get(index-1)
+    const afterNode = beforeNode.next
+    beforeNode.next = newNode
+    newNode.prev = beforeNode
+    newNode.next = afterNode
+    afterNode.prev = newNode
+    this.length++
+    return true
+  }
+```
+
+```jsx
+  remove(index){
+    if(index < 0 || index > this.length) return undefined
+    if(index === 0) return this.shift()
+    if(index === this.length-1) return this.pop()
+    let targetNode = this.get(index)
+    let beforeNode = targetNode.prev
+    let afterNode = targetNode.next
+    beforeNode.next = afterNode
+    afterNode.prev = beforeNode
+    targetNode.prev = null
+    targetNode.next = null
+    this.length--
+    return targetNode
+  }
+```
+
+### Doubly linked lists Big O
+
+insertion - `O(1)` 
+
+removal - `O(1)` 
+
+searching - `O(n)` 
+
+access - `O(n)`
+
+Doubly linked listy są szybsze w szukaniu node’ów od singly, to jednak zabiera więcej pamięci
