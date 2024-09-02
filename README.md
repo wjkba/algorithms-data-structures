@@ -1039,3 +1039,180 @@ searching - `O(n)`
 access - `O(n)`
 
 Doubly linked listy są szybsze w szukaniu node’ów od singly, to jednak zabiera więcej pamięci
+
+ # Stacks and Queues
+
+## Stacks
+
+![image.png](images/stack1.png)
+
+![image.png](images/stack2.png)
+
+
+**LIFO** - Last In First Out
+
+
+Stack to abstrakcyjna struktura danych
+
+Ostatnia rzecz (na samej górze) jest usuwana jako pierwsza (np. stos talerzy)
+
+Stack jest tylko koncepcją i nie ma jednej prawidłowej metody do tworzenie stacka. Łatwo jest stworzyć stack przy pomocy array, ale nie jest to najlepsze rozwiązanie bo nie używamy indeksów. 
+
+```jsx
+// Browser nav stack example
+let stack1 = []
+
+stack1.push("google")
+stack1.push("youtube")
+stack1.push("wikipedia")
+
+stack1.pop()
+console.log(stack1)
+
+// Photoshop stack example
+let stack2 = []
+
+stack2.unshift("create")
+stack2.unshift("resize")
+stack2.unshift("copy")
+
+stack2.shift()
+console.log(stack2)
+
+// push i pop jest lepszym rozwiązaniem bo nie trzeba reindeksować całego array
+```
+
+Metody array nie są potrzebne w stacku, stack to tylko dodawanie i usuwanie według **LIFO** dlatego można zrobić stacka za pomocą singly linked list.
+
+Tutaj używamy shift i unshift, ponieważ interesuje nas tylko dodawanie nowych elementów i usuwanie z początku stacka. W zwykłym singly linked list używałem push i pop, pop jest O(n) bo musi przeiterować przez każdy element a shift jest constant bo używa tylko pierwszego elementu.
+
+```jsx
+class Node {
+  constructor(value) {
+    this.value = value;
+    this.next = null;
+  }
+}
+
+class Stack {
+  constructor() {
+    this.first = null;
+    this.last = null;
+    this.size = 0;
+  }
+  unshift(value) {
+    let newNode = new Node(value);
+    if (!this.first) {
+      this.first = newNode;
+      this.last = newNode;
+    } else {
+      let currentFirst = this.first;
+      newNode.next = currentFirst;
+      this.first = newNode;
+    }
+    this.size++;
+  }
+  shift() {
+    if (this.size === 0) return null;
+    const currentFirst = this.first;
+    if (this.size === 1) {
+      this.first = null;
+      this.last = null;
+    } else {
+      let afterFirst = this.first.next;
+      this.first = afterFirst;
+      this.size--;
+    }
+    return currentFirst.value;
+  }
+}
+```
+
+### Stacks Big O
+
+Stack priorytezuje insertion i removal, searching i access nie mają tutaj znaczenia
+
+**insertion** - `O(1)` 
+
+**removal** - `O(1)` 
+
+*searching* - `O(n)` 
+
+*access* - `O(n)`
+
+## Queues
+
+![image.png](images/queue.png)
+
+Tak jak w stackach, queue opiera się na dwóch operacjach - dodawaniu i usuwaniu danych
+
+
+**FIFO** - First In First Out
+
+Łatwe rozwiązanie używając array
+
+```jsx
+let queue = []
+
+queue.push("FIRST")
+queue.push("SECOND")
+queue.push("THIRD")
+queue.shift()
+
+console.log(queue)
+```
+
+Tutaj używamy singly linked list i dwie metody - push i shift, które mają nazwę enqueue i dequeue
+
+```jsx
+class Node {
+  constructor(value) {
+    this.value = value;
+    this.next = null;
+  }
+}
+
+class Queue {
+  constructor() {
+    this.first = null;
+    this.last = null;
+    this.size = 0;
+  }
+  enqueue(val) {
+    const newNode = new Node(val);
+    if (!this.first) {
+      this.first = newNode;
+      this.last = newNode;
+    } else {
+      let lastNode = this.last;
+      lastNode.next = newNode;
+      this.last = newNode;
+    }
+    this.size++;
+  }
+  dequeue() {
+    if (!this.first) return null;
+    let firstNode = this.first;
+    if (this.first === this.last) {
+      this.last === null;
+    } else {
+      let secondNode = this.first.next;
+      this.first = secondNode;
+    }
+    this.size--;
+    return firstNode.value;
+  }
+}
+```
+
+### Queues Big O
+
+Tak samo jak Stacki znaczenie mają tutaj tylko insertion i removal. Są constant tylko w rozwiązaniu z singly linked lists, arraye nie mają tego samego Big O.
+
+**insertion** - `O(1)` 
+
+**removal** - `O(1)` 
+
+*searching* - `O(n)` 
+
+*access* - `O(n)`
