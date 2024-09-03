@@ -1216,3 +1216,115 @@ Tak samo jak Stacki znaczenie mają tutaj tylko insertion i removal. Są constan
 *searching* - `O(n)` 
 
 *access* - `O(n)`
+
+# Trees
+
+![image.png](images/tree.png)
+
+Tree to struktura danych, która składa się z node’ów w relacji **parent** / **child**.
+
+Root to node na samej górze, istnieje tylko jeden root
+
+Child nie może wskazywać na parent, node nie może wskazywać na sibling
+
+Siblings to grupa node’ów z jednym parentem
+
+Leaf to node bez children
+
+Drzewka są nielinearne, listy były linearne.
+
+## Binary Trees
+
+![image.png](images/binary-tree.png)
+
+Binary tree node może mieć maksymalnie dwa children
+
+## Binary Search Trees
+
+![binary-search-tree.gif](images/binary-search-tree.gif)
+
+- Każdy parent node może mieć maksymalnie 2 children
+- Children node z lewej strony parent node jest mniejszy od parent
+- Children node z prawej strony parent node jest większy od parent
+
+```jsx
+class Node{
+  constructor(value){
+    this.value = value
+    this.left = null
+    this.right = null
+  }
+}
+
+class BinarySearchTree{
+  constructor(){
+    this.root = null
+  }
+}
+```
+
+```jsx
+insert(value) {
+    const newNode = new Node(value);
+    if (this.root === null) {
+      this.root = newNode;
+      return this;
+    } else {
+      let currentNode = this.root;
+
+      // while loop bedzie dzialal dopoki nie znajdzie miejsca do wstawienia
+      while (true) {
+        // jesli trafimy na duplikat
+        if (value === currentNode.value) return undefined;
+
+        // LEFT
+        if (value < currentNode.value) {
+          // jesli nie ma po lewej node to wstawiamy go tam i git
+          if (currentNode.left === null) {
+            currentNode.left = newNode;
+            return this;
+          } else {
+            currentNode = currentNode.left;
+          }
+        }
+
+        // RIGHT
+        else if (value > currentNode.value) {
+          if (currentNode.right === null) {
+            currentNode.right = newNode;
+            return this;
+          } else {
+            currentNode = currentNode.right;
+          }
+        }
+      }
+    }
+  }
+```
+
+```jsx
+  find(value) {
+    if (this.root === null) return false;
+    let currentNode = this.root;
+    let found = false;
+    while (currentNode && !found) {
+      if (value < currentNode.value) {
+        currentNode = currentNode.left;
+      } else if (value > currentNode.value) {
+        currentNode = currentNode.right;
+      } else {
+        found = true;
+      }
+    }
+    if(!found) return undefined
+    return currentNode;
+  }
+```
+
+### Binary Search Tree Big O
+
+Binary search tree są wydajne dlatego, że kiedy podwajamy ilość node’ów to liczba operacji insert/find wzrasta tylko o 1 step
+
+**insertion** - `O(logn)` 
+
+***searching*** - `O(logn)`
