@@ -1328,3 +1328,83 @@ Binary search tree są wydajne dlatego, że kiedy podwajamy ilość node’ów t
 **insertion** - `O(logn)` 
 
 ***searching*** - `O(logn)`
+
+## Tree Traversal
+
+W jaki sposób odwiedzić każdego node’a?
+
+![tree-traversal.png](images/tree-traversal.png)
+
+- Breadth First Search (poziomo)
+- Depth First Search (pionowo)
+    - DFS Preorder
+    - DFS Inorder
+    - DFS Postorder
+
+```jsx
+  BFS() {
+    let currentNode = this.root;
+    let queue = [];
+    let visited = [];
+    queue.push(currentNode);
+    while (queue.length > 0) {
+      currentNode = queue.shift();
+      if (currentNode.left) queue.push(currentNode.left);
+      if (currentNode.right) queue.push(currentNode.right);
+      visited.push(currentNode.value);
+    }
+    return visited;
+  }
+```
+
+```jsx
+ DFSPreorder() {
+    let currentNode = this.root;
+    let visited = [];
+
+    function traverse(node) {
+      visited.push(node.value);
+      if (node.left) traverse(node.left);
+      if (node.right) traverse(node.right);
+    }
+
+    traverse(currentNode);
+    return visited;
+  }
+```
+
+```jsx
+  DFSPostorder() {
+    let currentNode = this.root;
+    let visited = [];
+
+    function traverse(node) {
+      if (node.left) traverse(node.left);
+      if (node.right) traverse(node.right);
+      visited.push(node.value);
+    }
+
+    traverse(currentNode);
+    return visited;
+  }
+```
+
+```jsx
+  DFSInorder() {
+    let currentNode = this.root;
+    let visited = [];
+
+    function traverse(node) {
+      if (node.left) traverse(node.left);
+      visited.push(node.value);
+      if (node.right) traverse(node.right);
+    }
+
+    traverse(currentNode);
+    return visited;
+  }
+```
+
+### DFS vs BFS
+
+Przy większych, szerszych drzewkach lepiej jest używać DFS, ponieważ zajmujemy się jednym branchem na raz. BFS ciągle dodaje i usuwa elementy z kolejki, space complexity jest większe.
