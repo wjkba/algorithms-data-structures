@@ -1408,3 +1408,201 @@ W jaki sposób odwiedzić każdego node’a?
 ### DFS vs BFS
 
 Przy większych, szerszych drzewkach lepiej jest używać DFS, ponieważ zajmujemy się jednym branchem na raz. BFS ciągle dodaje i usuwa elementy z kolejki, space complexity jest większe.
+
+# Binary Heaps
+
+Binary heap jest podobne do binary tree, ale ma inne zasady
+
+Używane w priority queues i graph traversal
+
+- **MaxBinaryHeap** - parent node’y są zawsze większe od child node’ów
+- **MinBinaryHeap** - parent node’y są zawsze mniejsze od child node’ów
+
+Każdy parent może mieć max 2 children 
+
+Nie ma podziału na mniejsze po lewej i większe po prawej tak jak w binary tree
+
+![image.png](images/heaps1.png)
+
+Binary Heap można zapisać w array
+
+![image.png](images/heaps2.png)
+
+Dla parent node o indeksie `n` lewy child tego elementu znajduje się na indeksie `2n+1` a prawy na indeksie `2n+2`
+
+Możemy też znaleźć indeks parenta na podstawie indeksu child, dla każdego child node o indeksie `n`  jego parent jest na indeksie `Math.floor((n-1)/2)`
+
+```jsx
+class MaxBinaryHeap {
+  constructor() {
+    this.values = [41, 39, 33, 18, 27, 12];
+  }
+  insert(value) {
+    this.values.push(value);
+    this.bubbleUp();
+  }
+  bubbleUp() {
+    let index = this.values.length - 1;
+    const element = this.values[index];
+    while (index > 0) {
+      let parentIndex = Math.floor((index - 1) / 2);
+      let parent = this.values[parentIndex];
+      if (element <= parent) break;
+      // swap
+      this.values[parentIndex] = element;
+      this.values[index] = parent;
+      index = parentIndex;
+    }
+  }
+}
+```
+
+```jsx
+extractMax() {
+    const max = this.values[0];
+    let lastValue = this.values[this.values.length - 1];
+    if(this.values.length > 0){
+      this.values[0] = lastValue;
+      this.values.pop();
+      this.bubbleDown();
+      return max;
+    }
+
+  }
+
+  bubbleDown() {
+    const value = this.values[0];
+    const length = this.values.length;
+    let currentIndex = 0;
+    while (true) {
+      let leftChildIndex = 2 * currentIndex + 1;
+      let rightChildIndex = 2 * currentIndex + 2;
+      let leftChild;
+      let rightChild;
+
+      // swapIndex za kazdym loopem jest null i zmieniamy jego wartosc
+      // wtedy kiedy znajdziemy wiekszego child
+      let swapIndex = null;
+
+      if (leftChildIndex < length) {
+        leftChild = this.values[leftChildIndex];
+        if (leftChild > value) {
+          swapIndex = leftChildIndex;
+        }
+      }
+      if (rightChildIndex < length) {
+        rightChild = this.values[rightChildIndex];
+        if (
+          (swapIndex === null && rightChild > value) ||
+          (swapIndex !== null && rightChild > leftChild)
+        ) {
+          swapIndex = rightChildIndex;
+        }
+      }
+
+      // jesli nie ma swapIndex to znaczy, ze nie znalezlismy
+      // zadnego childa do zmiany czyli koniec
+      if (swapIndex === null) break;
+
+      // swap
+      this.values[currentIndex] = this.values[swapIndex];
+      this.values[swapIndex] = value;
+      currentIndex = swapIndex;
+    }
+  }
+```
+
+## Priority Queue
+
+Każdy element priority queue ma priority, elementy z wyższym priorytetem wychodzą z kolejki wcześniej niż elementy z niższym priorytetem
+
+Ponizszy kod jest prawie taki sam jak jak wyzej z tym, ze tutaj stosujemy MinBinaryHeap i dzialamy na node’ach z wartosciami value i priority
+
+```jsx
+class Node {
+  constructor(value, priority) {
+    this.value = value;
+    this.priority = priority;
+  }
+}
+
+class PriorityQueue {
+  constructor() {
+    this.values = [];
+  }
+  enqueue(value, priority) {
+    const newNode = new Node(value, priority);
+    this.values.push(newNode);
+    this.bubbleUp();
+  }
+
+  bubbleUp() {
+    let index = this.values.length - 1;
+    const element = this.values[index];
+    while (index > 0) {
+      let parentIndex = Math.floor((index - 1) / 2);
+      let parent = this.values[parentIndex];
+      if (element.priority >= parent.priority) break;
+      this.values[parentIndex] = element;
+      this.values[index] = parent;
+      index = parentIndex;
+    }
+  }
+
+  dequeue() {
+    const min = this.values[0];
+    let lastNode = this.values[this.values.length - 1];
+    if (this.values.length > 0) {
+      this.values[0] = lastNode;
+      this.values.pop();
+      this.bubbleDown();
+      return min;
+    }
+  }
+
+  bubbleDown() {
+    const currentNode = this.values[0];
+    const length = this.values.length;
+    let currentIndex = 0;
+    while (true) {
+      let leftChildIndex = 2 * currentIndex + 1;
+      let rightChildIndex = 2 * currentIndex + 2;
+      let leftChild;
+      let rightChild;
+      let swapIndex = null;
+
+      if (leftChildIndex < length) {
+        leftChild = this.values[leftChildIndex];
+        if (leftChild.priority < currentNode.priority) {
+          swapIndex = leftChildIndex;
+        }
+      }
+      if (rightChildIndex < length) {
+        rightChild = this.values[rightChildIndex];
+        if (
+          (swapIndex === null && rightChild.priority < currentNode.priority) ||
+          (swapIndex !== null && rightChild.priority < leftChild.priority)
+        ) {
+          swapIndex = rightChildIndex;
+        }
+      }
+      if (swapIndex === null) break;
+
+      // swap
+      this.values[currentIndex] = this.values[swapIndex];
+      this.values[swapIndex] = currentNode;
+      currentIndex = swapIndex;
+    }
+  }
+}
+```
+
+## Binary Heaps Big O
+
+np. dla 16 elementów robimy 4 porównania
+
+insertion - `O(logn)` 
+
+*removal* - `O(logn)` 
+
+search - `O(n)`
