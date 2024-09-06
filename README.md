@@ -1606,3 +1606,131 @@ insertion - `O(logn)`
 *removal* - `O(logn)` 
 
 search - `O(n)`
+
+# Hash Tables
+
+Hast Tables są używane do przechowywania key-value pairs
+
+Żeby dostać się do wartości przy użyciu klucza trzeba przekonwertować klucze w prawidłowe oznaczenia array. Funkcja, która to robi nazywa się hash function.
+
+![image.png](images/hash-tables.png)
+
+## Hash function
+
+Poniższa funkcja ma pare problemów -  hashuje tylko stringi, nie jest constant time i może być losowa
+
+```jsx
+function simpleHash(key, arrayLen){
+  let total = 0
+  for(let char of key){
+    let value = char.charCodeAt(0) - 96
+    total = (total + value) % arrayLen
+  }
+  return total
+}
+```
+
+Liczby pierwsze są czesto używane w hash funkcjach, zmniejszają prawdopodobieństwo kolizji
+
+```jsx
+function hash(key, arrayLen){
+  let total = 0
+  let WEIRD_PRIME = 31
+  for(let i = 0; i < Math.min(key.length, 100); i++){
+    let char = key[i]
+    let value = char.charCodeAt(0) - 96
+    total = (total * WEIRD_PRIME + value) % arrayLen
+  }
+  return total
+}
+```
+
+## Kolizje
+
+### Separate Chaining
+
+Separate chaining polega na przechowywaniu danych w tym samym miejscu używając nested struktury danych (np. array albo linked list)
+
+### Linear Probing
+
+Tutaj zapisujemy tylko jeden kawałek danych na każdej pozycji a w przypadku kolizji szukamy następnego wolnego miejsca
+
+## Implementacja
+
+```jsx
+class HashTable {
+  // chcemy zeby size byl liczba pierwsza
+  constructor(size = 17) {
+    this.keyMap = new Array(size);
+  }
+  _hash(key) {
+    let total = 0;
+    let WEIRD_PRIME = 31;
+    for (let i = 0; i < Math.min(key.length, 100); i++) {
+      let char = key[i];
+      let value = char.charCodeAt(0) - 96;
+      total = (total * WEIRD_PRIME + value) % this.keyMap.length;
+    }
+    return total;
+  }
+  set(key, value) {
+    let index = this._hash(key);
+    // uzywamy separate chaining, jesli funkcja hash zwraca
+    // drugi raz ten sam indeks to na miejscu tego indeksu
+    // bedzie array, ktory ma w srodku dwa arraye key value
+    if (!this.keyMap[index]) {
+      this.keyMap[index] = [];
+    }
+    this.keyMap[index].push([key, value]);
+    return index;
+  }
+  get(key) {
+    let index = this._hash(key);
+    if (this.keyMap[index]) {
+      // ten loop jest po to zeby dostac prawidlowa value
+      // w sytuacji kiedy mamy wiecej niz jedna key value pair
+      // na indeksie, ktory dostajemy z hash function
+      for (let i = 0; i < this.keyMap[index].length; i++) {
+        if (this.keyMap[index][i][0] === key) {
+          return this.keyMap[index][i][1];
+        }
+      }
+    }
+    return undefined;
+  }
+  keys() {
+    let keys = [];
+    for (let i = 0; i < this.keyMap.length; i++) {
+      if (this.keyMap[i]) {
+        for (let j = 0; j < this.keyMap[i].length; j++) {
+          if (!keys.includes(this.keyMap[i][j][0]))
+            keys.push(this.keyMap[i][j][0]);
+        }
+      }
+    }
+    return keys;
+  }
+  values() {
+    let values = [];
+    for (let i = 0; i < this.keyMap.length; i++) {
+      if (this.keyMap[i]) {
+        for (let j = 0; j < this.keyMap[i].length; j++) {
+          if (!values.includes(this.keyMap[i][j][1]))
+            values.push(this.keyMap[i][j][1]);
+        }
+      }
+    }
+    return values;
+  }
+}
+```
+
+## Hash Tables Big O
+
+Dobra hash funkcja, która równomiernie rozdziela wszystkie wartości jest constant
+
+insertion - `O(1)` 
+
+deletion - `O(1)` 
+
+access - `O(1)`
