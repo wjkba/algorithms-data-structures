@@ -1734,3 +1734,93 @@ insertion - `O(1)`
 deletion - `O(1)` 
 
 access - `O(1)`
+
+# ⚠️ Graphs
+
+![image.png](images/graph1.png)
+
+Graph to kolekcja node’ów i połączeń między tymi node’ami
+
+**Vertex** - to node
+
+**Edge** - połączenie między node’ami
+
+Zastosowania:
+
+- w portalach społecznościowych, za pomocą grafów można zapisać relacje między użytkownikami, znajomymi.
+- mapy google
+- recommendations engines
+
+Graph może być **undirected** i **directed**
+
+
+![image.png](images/graph2.png)
+
+
+Graph może być **weighted** i **unweighted**
+
+![image.png](images/graph3.png)
+
+## Przechowywanie grafów
+
+### Adjacency Matrix
+
+Tworzymy dwuwymiarową macierz sąsiedztwa w której zapisujemy relację między node’ami
+
+![image.png](images/graph4.png)
+
+### Adjacency List
+
+Jeśli chcemy sprawdzić w jakiej relacji jest trójka z innymi node’ami to sprawdzamy wartość indeksu `3` arraya w którym jest nested array, czyli `[1,2,5]` to liczby w relacji z `3`
+
+![image.png](images/graph5.png)
+
+Jeśli wartości nie są numearmi to możemy zapisać listę w postaci słownika np. `D: [1, 2, 5]`
+
+### Adjacency List vs Adjacency Matrix
+
+**Lista sąsiedztwa**
+
+- może zajmować mniej miejsca
+- szybsze przechodzenie przez wszystkie edges
+- może być wolniejsza przy wyszukiwaniu konkretnego edge’a
+
+**Macierz sąsiedztwa**
+
+- zajmuje więcej miejsca
+- wolniejsze przechodzenie przez wszystkie edges
+- szybsze wyszukiwanie konkretnego edge’a
+
+## Implementacja
+
+```jsx
+class Graph {
+  constructor() {
+    this.adjacencyList = {};
+  }
+  addVertex(vertex) {
+    if (!this.adjacencyList[vertex]) {
+      this.adjacencyList[vertex] = [];
+    }
+  }
+  addEdge(vertex1, vertex2) {
+    this.adjacencyList[vertex1].push(vertex2);
+    this.adjacencyList[vertex2].push(vertex1);
+  }
+  removeEdge(vertex1, vertex2) {
+    this.adjacencyList[vertex1] = this.adjacencyList[vertex1].filter(
+      (v) => v !== vertex2
+    );
+    this.adjacencyList[vertex2] = this.adjacencyList[vertex2].filter(
+      (v) => v !== vertex1
+    );
+  }
+  removeVertex(vertex) {
+    while (this.adjacencyList[vertex].length) {
+      let adjacentVertex = this.adjacencyList[vertex].pop();
+      this.removeEdge(vertex, adjacentVertex);
+    }
+    delete this.adjacencyList[vertex];
+  }
+}
+```
