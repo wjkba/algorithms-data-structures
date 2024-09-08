@@ -1824,3 +1824,73 @@ class Graph {
   }
 }
 ```
+## ⚠️ Graph Traversal
+
+```jsx
+ DFSRecursive(startVertex) {
+    let result = [];
+    let visited = {};
+    const adjacencyList = this.adjacencyList;
+    DFS(startVertex);
+
+    function DFS(vertex) {
+      if (!vertex) return null;
+      result.push(vertex);
+      visited[vertex] = true;
+      for (let neighbor of adjacencyList[vertex]) {
+        if (!visited[neighbor]) {
+          return DFS(neighbor);
+        }
+      }
+    }
+    return result;
+  }
+```
+
+```jsx
+  DFSIterative(startVertex) {
+    let stack = [];
+    let result = [];
+    let visited = {};
+    let currentVertex;
+    stack.push(startVertex);
+
+    while (stack.length > 0) {
+      currentVertex = stack.pop();
+      if (!visited[currentVertex]) {
+        visited[currentVertex] = true;
+        result.push(currentVertex);
+        for (let neighbor of this.adjacencyList[currentVertex]) {
+          if (!visited[neighbor]) {
+            stack.push(neighbor);
+          }
+        }
+      }
+    }
+
+    return result;
+  }
+```
+
+```jsx
+  BFS(startVertex) {
+    let queue = [startVertex];
+    let result = [];
+    let visited = {};
+    let currentVertex;
+
+    while (queue.length > 0) {
+      currentVertex = queue.shift();
+      result.push(currentVertex);
+      visited[currentVertex] = true;
+      for (let neighbor of this.adjacencyList[currentVertex]) {
+        if (!visited[neighbor]) {
+          visited[neighbor] = true;
+          queue.push(neighbor);
+        }
+      }
+  
+    }
+    return result;
+  }
+```
