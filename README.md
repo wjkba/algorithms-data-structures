@@ -1894,3 +1894,77 @@ class Graph {
     return result;
   }
 ```
+
+# Algorytm Dijkstry
+
+![dijkstra.gif](images/dijkstra.gif)
+
+Algorytm Dijkstry znajduje najkrótszą drogę między dwoma vertexami na grafie.
+
+Dijkstra wykorzstuje weighted graphy i priority queue (kolejka taka jak w binary heaps)
+
+```jsx
+class WeightedGraph {
+  constructor() {
+    this.adjacencyList = {};
+  }
+  addVertex(vertex) {
+    if (!this.adjacencyList[vertex]) this.adjacencyList[vertex] = [];
+  }
+  addEdge(vertex1, vertex2, weight) {
+    this.adjacencyList[vertex1].push({ node: vertex2, weight });
+    this.adjacencyList[vertex2].push({ node: vertex1, weight });
+  }
+}
+```
+
+```jsx
+Dijkstra(startVertex, endVertex) {
+    let queue = new PriorityQueue();
+    let distances = {};
+    let previous = {};
+    let path = []
+    let smallest;
+
+    // initial state
+    for (let vertex in this.adjacencyList) {
+      if (vertex === startVertex) {
+        distances[vertex] = 0;
+        queue.enqueue(vertex, 0);
+      } else {
+        distances[vertex] = Infinity;
+        queue.enqueue(vertex, Infinity);
+      }
+      previous[vertex] = null;
+    }
+
+    while (queue.values.length > 0) {
+      smallest = queue.dequeue().val;
+      if (smallest === endVertex) {
+        while(previous[smallest]){
+          path.push(smallest)
+          smallest = previous[smallest]
+        }
+        break        
+      }
+      if (smallest || distances[smallest] !== Infinity) {
+        for (let neighbor in this.adjacencyList[smallest]) {
+          // znajdz sasiada
+          let nextNode = this.adjacencyList[smallest][neighbor];
+          // oblicz nowy dystans do sasiada
+          let candidate = distances[smallest] + nextNode.weight;
+          let nextNeighbor = nextNode.node;
+          if (candidate < distances[nextNeighbor]) {
+            // aktualizacja nowego najmniejszego dystansu do sasiada
+            distances[nextNeighbor] = candidate;
+            // aktualizacja poprzedniego - w jaki sposob dostalismy sie do sasiada
+            previous[nextNeighbor] = smallest;
+            // enqueue z nowym priorytetem
+            queue.enqueue(nextNeighbor, candidate);
+          }
+        }
+      }
+    }
+    return path.concat(smallest).reverse()
+  }
+```
