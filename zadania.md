@@ -227,5 +227,65 @@ permutations('dog'); // ['dog', 'dgo', 'odg', 'ogd', 'gdo', 'god']
       return result;
     }
     ```
-    
 
+---
+
+Given an `n x n` array, return the array elements arranged from outermost elements to the middle element, traveling clockwise.
+
+```jsx
+array = [[1,2,3],
+         [8,9,4],
+         [7,6,5]]
+snail(array) #=> [1,2,3,4,5,6,7,8,9]
+```
+
+- Solution
+    
+    ```jsx
+    snail = function(array) {
+      if(array[0].length === 0) return []
+      let top = 0
+      let right = array.length - 1
+      let bottom = array.length - 1
+      let left = 0
+    
+      let result = []
+    
+      while(top <= bottom && left <= right){
+        traverseRight()
+        traverseDown()
+        traverseLeft()
+        traverseUp()
+        top++
+        right--
+        bottom--
+        left++
+      }
+    
+      function traverseRight(){
+        for(let i = top; i <= right; i++){
+          result.push(array[top][i])
+        }
+      }
+    
+      function traverseDown(){
+        for(let i = top+1; i <= bottom; i++){
+          result.push(array[i][right])
+        }
+      }
+    
+      function traverseLeft(){
+        for(let i = right-1; i >= left; i--){
+          result.push(array[bottom][i])
+        } 
+      }
+    
+      function traverseUp(){
+        for(let i = bottom-1; i > top; i--){
+          result.push(array[i][left])
+        } 
+      }
+    
+      return result
+    }
+    ```
